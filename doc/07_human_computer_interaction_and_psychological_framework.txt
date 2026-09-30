@@ -1,0 +1,15 @@
+SECTION 1: HUMAN COMPUTER INTERACTION AND DIGITAL IDENTITY
+
+In Human Computer Interaction research, digital self representation plays a fundamental role in user engagement and social identity projection. The Bitmoji Avatar Studio provides a controlled mobile environment for users to construct visual representations of identity.
+
+SECTION 2: SELF DISCREPANCY THEORY IN AVATAR CUSTOMIZATION
+
+According to Self Discrepancy Theory, individuals evaluate themselves across actual, ideal, and ought self domains. The customization interface allows users to select physical features, hairstyles, expressions, and clothing items. This enables empirical investigation into whether users build avatars reflecting their actual physical self or an enhanced ideal self.
+
+SECTION 3: THE PROTEUS EFFECT AND IMMERSION
+
+The Proteus Effect describes how digital avatar characteristics influence user behavior and self perception. Providing customizable vector avatars increases user sense of agency, spatial presence, and emotional ownership. The crisp vector rendering and responsive GetX interface minimize cognitive friction and support immersive customization.
+
+SECTION 4: THESIS RESEARCH APPARATUS AND DATA COLLECTION
+
+The application serves as a complete research platform for Human Computer Interaction and Psychology thesis projects. Creation timestamps, feature selections, and avatar naming patterns stored in GetStorage can be analyzed to evaluate self presentation patterns across diverse demographic groups.

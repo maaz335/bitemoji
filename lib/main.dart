@@ -1,45 +1,61 @@
 import 'package:flutter/material.dart';
-import 'screens/avatar_gallery_screen.dart';
+import 'package:get/get.dart';
+import 'package:untitled/controllers/avatar_creator_controller.dart';
+import 'package:untitled/controllers/avatar_detail_controller.dart';
+import 'package:untitled/controllers/avatar_gallery_controller.dart';
+import 'package:untitled/core/constants/app_strings.dart';
+import 'package:untitled/core/theme/app_theme.dart';
+import 'package:untitled/screens/avatar_creator_screen.dart';
+import 'package:untitled/screens/avatar_detail_screen.dart';
+import 'package:untitled/screens/avatar_gallery_screen.dart';
+import 'package:untitled/services/storage_service.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const RPMApp());
+  
+  // Initialize GetStorage high-performance local persistence service
+  final storageService = StorageService();
+  await storageService.init();
+  Get.put<StorageService>(storageService, permanent: true);
+
+  runApp(const BitmojiAvatarApp());
 }
 
-class RPMApp extends StatelessWidget {
-  const RPMApp({super.key});
+class BitmojiAvatarApp extends StatelessWidget {
+  const BitmojiAvatarApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'RPM 3D Avatar Studio',
+    return GetMaterialApp(
+      title: AppStrings.appTitle,
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.dark,
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0F172A),
-        colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF6366F1),
-          secondary: Color(0xFFEC4899),
-          surface: Color(0xFF1E293B),
+      theme: AppTheme.darkTheme,
+      initialRoute: '/',
+      getPages: [
+        GetPage(
+          name: '/',
+          page: () => const AvatarGalleryScreen(),
+          binding: BindingsBuilder(() {
+            Get.lazyPut<AvatarGalleryController>(() => AvatarGalleryController());
+          }),
         ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF1E293B),
-          elevation: 0,
-          centerTitle: true,
-          titleTextStyle: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+        GetPage(
+          name: '/creator',
+          page: () => const AvatarCreatorScreen(),
+          binding: BindingsBuilder(() {
+            Get.lazyPut<AvatarCreatorController>(() => AvatarCreatorController());
+          }),
+          transition: Transition.rightToLeftWithFade,
         ),
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Color(0xFF6366F1),
-          foregroundColor: Colors.white,
+        GetPage(
+          name: '/detail',
+          page: () => const AvatarDetailScreen(),
+          binding: BindingsBuilder(() {
+            Get.lazyPut<AvatarDetailController>(() => AvatarDetailController());
+          }),
+          transition: Transition.fadeIn,
         ),
-        useMaterial3: true,
-      ),
-      home: const AvatarGalleryScreen(),
+      ],
     );
   }
 }

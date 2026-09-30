@@ -1,0 +1,11 @@
+SECTION 1: AVATAR GALLERY SCREEN
+
+Located in lib/screens/avatar_gallery_screen.dart, AvatarGalleryScreen extends GetView of AvatarGalleryController. The screen displays a top header with brand icon and title text, a search text field for live filtering, a responsive two column grid displaying avatar cards, an empty state view with illustration when no avatars are present, and a floating gradient action button to navigate to the creator screen.
+
+SECTION 2: AVATAR CREATOR SCREEN
+
+Located in lib/screens/avatar_creator_screen.dart, AvatarCreatorScreen extends GetView of AvatarCreatorController. The screen features a top navigation bar, a circular live vector preview avatar wrapped in ClipOval to prevent border overflow, an interactive Fluttermoji customizer grid configured with dark theme properties, and a bottom container housing a gradient save action button.
+
+SECTION 3: AVATAR DETAIL SCREEN AND BORDER CLIPPING
+
+Located in lib/screens/avatar_detail_screen.dart, AvatarDetailScreen extends GetView of AvatarDetailController. The screen displays a top navigation bar with back button and delete action, a centered vector preview box wrapped in ClipOval and RepaintBoundary to eliminate visual border overflow, creation date metadata, and a bottom row featuring two action buttons for downloading the PNG sticker file and sharing directly to social media platforms.

@@ -1,0 +1,15 @@
+SECTION 1: SYSTEM ARCHITECTURE AND OVERVIEW
+
+The Avatar Studio application is built using Google Flutter and the GetX framework. The software follows a modular Clean Architecture pattern to separate business logic, UI components, data structures, and persistent storage.
+
+SECTION 2: APPLICATION BOOTSTRAPPING AND REBRANDING
+
+The main entry point resides in main.dart. The application is branded as Avatar Studio across native Android Manifest and iOS Info.plist manifests. Launcher icons are configured using full bleed edge to edge vector graphics to integrate cleanly with native mobile home screen masking. During launch, Flutter bindings are initialized before registering asynchronous singletons. The storage service is instantiated and initialized asynchronously. Once GetStorage completes disk preparation, the storage service is injected into the global GetX dependency container as a permanent service.
+
+SECTION 3: DEPENDENCY INJECTION AND ROUTING
+
+Application routing relies entirely on GetPage definitions within GetMaterialApp. This eliminates standard Flutter Navigator push operations and enforces declarative state-driven routing. Each route defines lazy dependency bindings using BindingsBuilder. When a route is navigated to, its corresponding controller is instantiated automatically. When the screen is popped, memory is reclaimed.
+
+SECTION 4: COMPONENT DECOUPLING AND DRY PRINCIPLE
+
+The application enforces a strict separation between UI rendering and controller logic. Screens extend StatelessWidget and implement GetView. Controllers handle state mutations and data persistence. All user facing text is stored in a centralized string registry to eliminate hardcoded text strings across the project.

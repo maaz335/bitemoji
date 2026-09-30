@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Untitled</string>
+	<string>Avatar Studio</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>untitled</string>
+	<string>Avatar Studio</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -45,18 +45,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-
-	<!-- Ready Player Me & 3D Model Rendering Permissions -->
-	<key>NSCameraUsageDescription</key>
-	<string>This app requires camera access to take selfies for Ready Player Me avatar creation.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app requires microphone access for Ready Player Me features.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires photo library access to choose a photo for your avatar.</string>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
+	<string>This app requires photo library access to save or select avatar images.</string>
 </dict>
 </plist>

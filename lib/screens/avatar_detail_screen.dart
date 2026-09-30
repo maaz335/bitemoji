@@ -1,122 +1,140 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:model_viewer_plus/model_viewer_plus.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:untitled/controllers/avatar_detail_controller.dart';
+import 'package:untitled/core/constants/app_strings.dart';
+import 'package:untitled/core/theme/app_theme.dart';
+import 'package:untitled/widgets/custom_button.dart';
 
-/// Screen 3: Detail Screen (The 3D Interaction)
-/// Renders the 3D .glb avatar using model_viewer_plus.
-/// Enables rotation, zoom, camera controls, and Augmented Reality (AR).
-class AvatarDetailScreen extends StatelessWidget {
-  final String glbUrl;
-
-  const AvatarDetailScreen({
-    super.key,
-    required this.glbUrl,
-  });
+/// Detail view screen displaying full-size rendering of saved Bitmoji avatar, PNG sticker capture, download, and share actions.
+class AvatarDetailScreen extends GetView<AvatarDetailController> {
+  const AvatarDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('3D Avatar Viewer'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.copy_outlined),
-            tooltip: 'Copy GLB URL',
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: glbUrl));
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('GLB model URL copied to clipboard'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          // 3D Model Renderer via model_viewer_plus
-          ModelViewer(
-            src: glbUrl,
-            alt: 'Ready Player Me 3D Avatar',
-            autoRotate: true,
-            cameraControls: true,
-            ar: true,
-            backgroundColor: const Color(0xFF0F172A),
-          ),
+    final avatar = controller.avatar;
 
-          // User interaction tips overlay
-          Positioned(
-            bottom: 24,
-            left: 20,
-            right: 20,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E293B).withValues(alpha: 0.85),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.1),
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(gradient: AppTheme.backgroundGradient),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Top Navigation Bar
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new, color: AppTheme.textPrimary),
+                      onPressed: controller.goBack,
+                    ),
+                    Expanded(
+                      child: Text(
+                        avatar.name,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textPrimary,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline, color: AppTheme.errorColor),
+                      onPressed: controller.deleteAvatar,
+                    ),
+                  ],
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
               ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _InteractionTip(
-                    icon: Icons.rotate_right,
-                    label: 'Drag to Rotate',
+
+              const Spacer(),
+
+              // Full Size Render Box wrapped in RepaintBoundary for PNG sticker rendering
+              Center(
+                child: RepaintBoundary(
+                  key: controller.repaintBoundaryKey,
+                  child: ClipOval(
+                    child: Container(
+                      width: 280,
+                      height: 280,
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.cardColor,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primaryColor.withValues(alpha: 0.3),
+                            blurRadius: 30,
+                            spreadRadius: 5,
+                          ),
+                        ],
+                        border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.4), width: 3),
+                      ),
+                      child: ClipOval(
+                        child: SvgPicture.string(
+                          avatar.renderedSvg,
+                          fit: BoxFit.contain,
+                          placeholderBuilder: (_) => const Center(
+                            child: CircularProgressIndicator(color: AppTheme.primaryColor),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  _InteractionTip(
-                    icon: Icons.pinch,
-                    label: 'Pinch to Zoom',
-                  ),
-                  _InteractionTip(
-                    icon: Icons.view_in_ar,
-                    label: 'Tap AR Icon',
-                  ),
-                ],
+                ),
               ),
-            ),
+
+              const SizedBox(height: 24),
+
+              // Date Metadata
+              Text(
+                '${AppStrings.createdOn}: ${_formatDate(avatar.createdAt)}',
+                style: const TextStyle(
+                  color: AppTheme.textSecondary,
+                  fontSize: 14,
+                ),
+              ),
+
+              const Spacer(),
+
+              // Download and Social Share Action Buttons
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                child: Obx(() => Row(
+                      children: [
+                        // Download Avatar PNG Sticker Button
+                        Expanded(
+                          child: CustomButton(
+                            label: AppStrings.downloadAvatar,
+                            icon: Icons.file_download_rounded,
+                            gradient: AppTheme.primaryGradient,
+                            isLoading: controller.isProcessing.value,
+                            onPressed: controller.downloadAvatar,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // Share to Social Media PNG Sticker Button
+                        Expanded(
+                          child: CustomButton(
+                            label: AppStrings.shareAvatar,
+                            icon: Icons.share_rounded,
+                            gradient: AppTheme.accentGradient,
+                            isLoading: controller.isProcessing.value,
+                            onPressed: controller.shareAvatar,
+                          ),
+                        ),
+                      ],
+                    )),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
-}
 
-class _InteractionTip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const _InteractionTip({
-    required this.icon,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 16, color: const Color(0xFF6366F1)),
-        const SizedBox(width: 6),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.white70,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year} at ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 }

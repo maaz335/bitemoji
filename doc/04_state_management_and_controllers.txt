@@ -1,0 +1,11 @@
+SECTION 1: AVATAR GALLERY CONTROLLER
+
+Located in lib/controllers/avatar_gallery_controller.dart, the AvatarGalleryController manages gallery screen state using reactive GetX observables. It maintains observable lists for all saved avatars and filtered search results. A reactive worker listens to search query string changes and updates the filtered list automatically. The controller handles navigation to creator and detail screens, list reloads, and record deletion.
+
+SECTION 2: AVATAR CREATOR CONTROLLER
+
+Located in lib/controllers/avatar_creator_controller.dart, the AvatarCreatorController manages customization state during avatar creation. When the user taps save, the controller prompts for an avatar name using a modal dialog. Upon name entry, it requests the encoded selection options from Fluttermoji, decodes them into a valid SVG XML vector payload, instantiates a new SavedAvatar entity, saves it to StorageService, closes the creator screen immediately to return to the gallery, and displays a success feedback snackbar.
+
+SECTION 3: AVATAR DETAIL CONTROLLER AND PNG STICKER EXPORT
+
+Located in lib/controllers/avatar_detail_controller.dart, the AvatarDetailController manages individual avatar detail view operations. It utilizes a RepaintBoundary key to capture the rendered avatar widget as a high resolution transparent PNG sticker at four times pixel ratio density. The downloadAvatar method saves this PNG sticker image to application documents storage. The shareAvatar method exports the PNG sticker file to temporary storage and invokes system share sheets for sharing to social media platforms such as WhatsApp, Snapchat, and Instagram.

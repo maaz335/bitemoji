@@ -1,0 +1,11 @@
+SECTION 1: SAVED AVATAR DATA MODEL
+
+Located in lib/models/saved_avatar.dart, the SavedAvatar class defines the data model for stored avatars. Each avatar entity contains four properties: a unique String identifier generated from a Unix timestamp, a user defined name String, an SVG payload String representing the vector rendering data, and a DateTime creation timestamp.
+
+SECTION 2: AUTOMATIC SVG DECODING ENGINE
+
+The SavedAvatar class includes a getter property named renderedSvg. When rendering vector graphics, renderedSvg evaluates whether the stored payload string starts with JSON formatting. If JSON option attributes are detected, it invokes the Fluttermoji decoder to convert the attribute mapping into a rendered SVG XML string. If valid SVG XML is already present, it returns the XML string directly. This ensures backward compatibility for all stored records.
+
+SECTION 3: STORAGE SERVICE PERSISTENCE ENGINE
+
+Located in lib/services/storage_service.dart, StorageService extends GetxService and utilizes GetStorage for fast disk persistence. The service provides methods to initialize disk access, load all stored avatars into a list, save new or updated avatar records to disk, delete avatar records by identifier, and purge stored data. All records are serialized into key-value map structures and written to persistent storage.

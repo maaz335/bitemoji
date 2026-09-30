@@ -1,0 +1,15 @@
+SECTION 1: CUSTOM BUTTON WIDGET
+
+Located in lib/widgets/custom_button.dart, CustomButton is a reusable stateless widget that renders action buttons with linear gradients, custom shadows, icons, loading indicators, and tap handlers while enforcing consistent UI styling across screens.
+
+SECTION 2: AVATAR CARD WIDGET
+
+Located in lib/widgets/avatar_card_widget.dart, AvatarCardWidget is a reusable grid item component. It renders a circular container housing the avatar SVG vector graphic, avatar title text with ellipsis truncation, and a quick delete action icon button.
+
+SECTION 3: CUSTOM DIALOG UTILITIES
+
+Located in lib/widgets/custom_dialogs.dart, CustomDialogs provides static helper methods for modal popups using Get.dialog. It includes showConfirmDelete for user delete confirmation and showSaveNameDialog for text field input when assigning names to newly created avatars.
+
+SECTION 4: CUSTOM SNACKBAR UTILITIES
+
+Located in lib/widgets/custom_snackbars.dart, CustomSnackbars provides static helper methods for user notifications using Get.snackbar. It provides standardized success, error, and info toast banners configured with custom icons, entry curves, and brand background colors.

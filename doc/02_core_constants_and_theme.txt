@@ -1,0 +1,15 @@
+SECTION 1: CORE DESIGN SYSTEM AND THEME
+
+The application theme module is located in lib/core/theme/app_theme.dart. It defines a dark mode palette featuring deep purple and dark slate surfaces. Brand colors include a primary purple (Hex 6C5CE7), secondary light purple (Hex A29BFE), accent pink (Hex FD79A8), background dark purple (Hex 0F0C20), surface dark slate (Hex 1D1B36), card surface (Hex 282545), and specialized semantic colors for success and error feedback.
+
+SECTION 2: LINEAR GRADIENTS AND VISUAL UTILITIES
+
+Primary and accent linear gradients are configured within AppTheme to provide smooth background transitions for action buttons, headers, and card containers. The theme configures Material 3 ThemeData with custom card theme data, app bar typography, and elevation metrics.
+
+SECTION 3: CENTRALIZED STRING REGISTRY
+
+Located in lib/core/constants/app_strings.dart, the AppStrings class contains static constant strings for all screen titles, subtitles, placeholders, button labels, modal dialog prompts, and feedback snackbar messages. This guarantees centralized text management and simplifies future localization.
+
+SECTION 4: LAYOUT CONSTANTS AND METRICS
+
+Located in lib/core/constants/app_constants.dart, the AppConstants class defines standard numerical values for padding sizes, border radii, card elevation heights, animation durations, and local storage key names.
