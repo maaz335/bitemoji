@@ -45,14 +45,37 @@ class AvatarDetailController extends GetxController {
     }
   }
 
-  /// Download PNG sticker image file to local storage.
+  /// Download 3D GLB model or PNG sticker image file to local storage.
   Future<void> downloadAvatar() async {
     try {
       isProcessing.value = true;
       final directory = await getApplicationDocumentsDirectory();
       final sanitizedName = avatar.name.replaceAll(RegExp(r'[^\w\s]+'), '_').replaceAll(' ', '_');
-      final pngBytes = await _capturePngBytes();
 
+      if (avatar.glbPath != null && avatar.glbPath!.isNotEmpty) {
+        // Export 3D GLB Model File
+        final fileName = '${sanitizedName}_avatar3d.glb';
+        final file = File('${directory.path}/$fileName');
+        Uint8List bytes;
+        if (avatar.glbPath!.startsWith('assets/')) {
+          final byteData = await rootBundle.load(avatar.glbPath!);
+          bytes = byteData.buffer.asUint8List();
+        } else {
+          final filePath = avatar.glbPath!.startsWith('file:')
+              ? Uri.parse(avatar.glbPath!).toFilePath()
+              : avatar.glbPath!;
+          bytes = await File(filePath).readAsBytes();
+        }
+        await file.writeAsBytes(bytes);
+
+        CustomSnackbars.showSuccess(
+          'Saved 3D GLB Model to documents:\n$fileName',
+          title: AppStrings.success,
+        );
+        return;
+      }
+
+      final pngBytes = await _capturePngBytes();
       if (pngBytes != null) {
         final fileName = '${sanitizedName}_sticker.png';
         final file = File('${directory.path}/$fileName');
@@ -80,14 +103,37 @@ class AvatarDetailController extends GetxController {
     }
   }
 
-  /// Share avatar PNG sticker image directly to social media apps.
+  /// Share 3D GLB model or PNG sticker directly to social media apps.
   Future<void> shareAvatar() async {
     try {
       isProcessing.value = true;
       final directory = await getTemporaryDirectory();
       final sanitizedName = avatar.name.replaceAll(RegExp(r'[^\w\s]+'), '_').replaceAll(' ', '_');
-      final pngBytes = await _capturePngBytes();
 
+      if (avatar.glbPath != null && avatar.glbPath!.isNotEmpty) {
+        final fileName = '${sanitizedName}_avatar3d.glb';
+        final file = File('${directory.path}/$fileName');
+        Uint8List bytes;
+        if (avatar.glbPath!.startsWith('assets/')) {
+          final byteData = await rootBundle.load(avatar.glbPath!);
+          bytes = byteData.buffer.asUint8List();
+        } else {
+          final filePath = avatar.glbPath!.startsWith('file:')
+              ? Uri.parse(avatar.glbPath!).toFilePath()
+              : avatar.glbPath!;
+          bytes = await File(filePath).readAsBytes();
+        }
+        await file.writeAsBytes(bytes);
+
+        final xFile = XFile(file.path, mimeType: 'model/gltf-binary', name: fileName);
+        await Share.shareXFiles(
+          [xFile],
+          text: 'Check out my custom 3D Avatar model "${avatar.name}"!',
+        );
+        return;
+      }
+
+      final pngBytes = await _capturePngBytes();
       if (pngBytes != null) {
         final fileName = '${sanitizedName}_sticker.png';
         final file = File('${directory.path}/$fileName');
@@ -96,7 +142,7 @@ class AvatarDetailController extends GetxController {
         final xFile = XFile(file.path, mimeType: 'image/png', name: fileName);
         await Share.shareXFiles(
           [xFile],
-          text: 'My custom Bitmoji avatar "${avatar.name}" sticker!',
+          text: 'My custom avatar "${avatar.name}" sticker!',
         );
       } else {
         // Fallback to SVG format
@@ -107,7 +153,7 @@ class AvatarDetailController extends GetxController {
         final xFile = XFile(file.path, mimeType: 'image/svg+xml', name: fileName);
         await Share.shareXFiles(
           [xFile],
-          text: 'My custom Bitmoji avatar "${avatar.name}"!',
+          text: 'My custom avatar "${avatar.name}"!',
         );
       }
     } catch (e) {

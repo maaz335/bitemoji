@@ -45,22 +45,48 @@ class AvatarCardWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppTheme.surfaceColor,
-                      border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.3), width: 1.5),
-                    ),
-                    child: ClipOval(
-                      child: SvgPicture.string(
-                        avatar.renderedSvg,
-                        fit: BoxFit.contain,
-                        placeholderBuilder: (_) => const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppTheme.surfaceColor,
+                            border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.3), width: 1.5),
+                          ),
+                          child: ClipOval(
+                            child: SvgPicture.string(
+                              avatar.renderedSvg,
+                              fit: BoxFit.contain,
+                              placeholderBuilder: (_) => const Center(
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      if (avatar.glbPath != null && avatar.glbPath!.isNotEmpty)
+                        Positioned(
+                          right: 4,
+                          top: 4,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              gradient: AppTheme.accentGradient,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Text(
+                              '3D',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 10),

@@ -19,6 +19,7 @@ dependencies:
   flutter_svg: ^2.3.0
   share_plus: ^10.1.4
   path_provider: ^2.1.5
+  flutter_3d_controller: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -27,3 +28,12 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/models/avatar.glb
+    - assets/models/3d_parts/
+    - assets/models/modular_parts/men/
+    - assets/models/modular_parts/women/
+    - assets/models/characters/men/
+    - assets/models/characters/women/
+
+

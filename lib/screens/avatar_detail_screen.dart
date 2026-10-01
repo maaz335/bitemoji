@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_3d_controller/flutter_3d_controller.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:untitled/controllers/avatar_detail_controller.dart';
@@ -50,39 +51,66 @@ class AvatarDetailScreen extends GetView<AvatarDetailController> {
 
               const Spacer(),
 
-              // Full Size Render Box wrapped in RepaintBoundary for PNG sticker rendering
+              // Full Size Render Box (3D GLB Viewer or 2D SVG)
               Center(
-                child: RepaintBoundary(
-                  key: controller.repaintBoundaryKey,
-                  child: ClipOval(
-                    child: Container(
-                      width: 280,
-                      height: 280,
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppTheme.cardColor,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.primaryColor.withValues(alpha: 0.3),
-                            blurRadius: 30,
-                            spreadRadius: 5,
+                child: avatar.glbPath != null && avatar.glbPath!.isNotEmpty
+                    ? Container(
+                        width: 280,
+                        height: 280,
+                        decoration: BoxDecoration(
+                          color: AppTheme.cardColor,
+                          borderRadius: BorderRadius.circular(28),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.primaryColor.withValues(alpha: 0.35),
+                              blurRadius: 30,
+                              spreadRadius: 5,
+                            ),
+                          ],
+                          border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.5), width: 2.5),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(28),
+                          child: Flutter3DViewer(
+                            src: (avatar.glbPath!.startsWith('assets/') ||
+                                    avatar.glbPath!.startsWith('http') ||
+                                    avatar.glbPath!.startsWith('file:'))
+                                ? avatar.glbPath!
+                                : Uri.file(avatar.glbPath!).toString(),
                           ),
-                        ],
-                        border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.4), width: 3),
-                      ),
-                      child: ClipOval(
-                        child: SvgPicture.string(
-                          avatar.renderedSvg,
-                          fit: BoxFit.contain,
-                          placeholderBuilder: (_) => const Center(
-                            child: CircularProgressIndicator(color: AppTheme.primaryColor),
+                        ),
+                      )
+                    : RepaintBoundary(
+                        key: controller.repaintBoundaryKey,
+                        child: ClipOval(
+                          child: Container(
+                            width: 280,
+                            height: 280,
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppTheme.cardColor,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppTheme.primaryColor.withValues(alpha: 0.3),
+                                  blurRadius: 30,
+                                  spreadRadius: 5,
+                                ),
+                              ],
+                              border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.4), width: 3),
+                            ),
+                            child: ClipOval(
+                              child: SvgPicture.string(
+                                avatar.renderedSvg,
+                                fit: BoxFit.contain,
+                                placeholderBuilder: (_) => const Center(
+                                  child: CircularProgressIndicator(color: AppTheme.primaryColor),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
               ),
 
               const SizedBox(height: 24),
@@ -103,21 +131,21 @@ class AvatarDetailScreen extends GetView<AvatarDetailController> {
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 child: Obx(() => Row(
                       children: [
-                        // Download Avatar PNG Sticker Button
+                        // Download Avatar (GLB or PNG)
                         Expanded(
                           child: CustomButton(
-                            label: AppStrings.downloadAvatar,
-                            icon: Icons.file_download_rounded,
+                            label: avatar.glbPath != null ? 'Download GLB' : AppStrings.downloadAvatar,
+                            icon: avatar.glbPath != null ? Icons.view_in_ar_rounded : Icons.file_download_rounded,
                             gradient: AppTheme.primaryGradient,
                             isLoading: controller.isProcessing.value,
                             onPressed: controller.downloadAvatar,
                           ),
                         ),
                         const SizedBox(width: 12),
-                        // Share to Social Media PNG Sticker Button
+                        // Share to Social Media (GLB or PNG)
                         Expanded(
                           child: CustomButton(
-                            label: AppStrings.shareAvatar,
+                            label: avatar.glbPath != null ? 'Share 3D Model' : AppStrings.shareAvatar,
                             icon: Icons.share_rounded,
                             gradient: AppTheme.accentGradient,
                             isLoading: controller.isProcessing.value,

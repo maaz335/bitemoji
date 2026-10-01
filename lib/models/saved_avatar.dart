@@ -1,17 +1,19 @@
 import 'dart:convert';
 import 'package:fluttermoji/fluttermoji.dart';
 
-/// Represents a user-customized Bitmoji avatar saved in storage.
+/// Represents a user-customized avatar saved in storage (supports 2D SVG and 3D GLB models).
 class SavedAvatar {
   final String id;
   final String name;
   final String svgData;
+  final String? glbPath;
   final DateTime createdAt;
 
   SavedAvatar({
     required this.id,
     required this.name,
     required this.svgData,
+    this.glbPath,
     required this.createdAt,
   });
 
@@ -33,6 +35,7 @@ class SavedAvatar {
       'id': id,
       'name': name,
       'svgData': svgData,
+      'glbPath': glbPath,
       'createdAt': createdAt.toIso8601String(),
     };
   }
@@ -42,6 +45,7 @@ class SavedAvatar {
       id: map['id'] ?? '',
       name: map['name'] ?? 'Untitled Avatar',
       svgData: map['svgData'] ?? '',
+      glbPath: map['glbPath'],
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'])
           : DateTime.now(),
@@ -57,13 +61,16 @@ class SavedAvatar {
     String? id,
     String? name,
     String? svgData,
+    String? glbPath,
     DateTime? createdAt,
   }) {
     return SavedAvatar(
       id: id ?? this.id,
       name: name ?? this.name,
       svgData: svgData ?? this.svgData,
+      glbPath: glbPath ?? this.glbPath,
       createdAt: createdAt ?? this.createdAt,
     );
   }
 }
+
