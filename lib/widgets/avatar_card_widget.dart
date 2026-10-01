@@ -65,7 +65,7 @@ class AvatarCardWidget extends StatelessWidget {
                                   child: Image.asset(
                                     avatar.thumbnailPath ?? 'assets/thumbnails/default_3d.png',
                                     fit: BoxFit.cover,
-                                    errorBuilder: (_, __, ___) => const Center(
+                                    errorBuilder: (context, error, stackTrace) => const Center(
                                       child: Icon(
                                         Icons.view_in_ar_rounded,
                                         color: AppTheme.secondaryColor,
