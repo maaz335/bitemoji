@@ -49,21 +49,40 @@ class AvatarCardWidget extends StatelessWidget {
                     children: [
                       Center(
                         child: Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: avatar.is3D ? EdgeInsets.zero : const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: AppTheme.surfaceColor,
-                            border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.3), width: 1.5),
-                          ),
-                          child: ClipOval(
-                            child: SvgPicture.string(
-                              avatar.renderedSvg,
-                              fit: BoxFit.contain,
-                              placeholderBuilder: (_) => const Center(
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              ),
+                            border: Border.all(
+                              color: avatar.is3D
+                                  ? AppTheme.secondaryColor.withValues(alpha: 0.5)
+                                  : AppTheme.primaryColor.withValues(alpha: 0.3),
+                              width: 1.5,
                             ),
                           ),
+                          child: avatar.is3D
+                              ? ClipOval(
+                                  child: Image.asset(
+                                    avatar.thumbnailPath ?? 'assets/thumbnails/default_3d.png',
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => const Center(
+                                      child: Icon(
+                                        Icons.view_in_ar_rounded,
+                                        color: AppTheme.secondaryColor,
+                                        size: 40,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : ClipOval(
+                                  child: SvgPicture.string(
+                                    avatar.renderedSvg,
+                                    fit: BoxFit.contain,
+                                    placeholderBuilder: (_) => const Center(
+                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                    ),
+                                  ),
+                                ),
                         ),
                       ),
                       if (avatar.glbPath != null && avatar.glbPath!.isNotEmpty)

@@ -60,6 +60,8 @@ class PartCategory {
 class AvatarCreatorController extends GetxController {
   final StorageService _storageService = Get.find<StorageService>();
   final RxBool isSaving = false.obs;
+  final RxBool isAssemblingPreview = false.obs;
+  File? _lastPreviewFile;
 
   // Active 3D model path displayed in the viewer
   final RxString current3dGlbPath = ''.obs;
@@ -308,22 +310,35 @@ class AvatarCreatorController extends GetxController {
   /// Update 3D preview to show the fully assembled composite avatar
   Future<void> _updateMixPreview() async {
     try {
+      isAssemblingPreview.value = true;
       final head = getSelectedPartPath('head');
       final body = getSelectedPartPath('body');
       final legs = getSelectedPartPath('legs');
       final feet = getSelectedPartPath('feet');
 
+      final ts = DateTime.now().millisecondsSinceEpoch;
       final assembledFile = await GlbMergerService.assembleModularAvatar(
         partAssetPaths: [head, body, legs, feet],
-        outputFileName: 'preview_composite_${mixGender.value}.glb',
+        outputFileName: 'preview_${mixGender.value}_$ts.glb',
       );
+
+      // Clean up previous temporary preview file to prevent cache buildup
+      if (_lastPreviewFile != null && await _lastPreviewFile!.exists()) {
+        try {
+          await _lastPreviewFile!.delete();
+        } catch (_) {}
+      }
+      _lastPreviewFile = assembledFile;
+
       current3dGlbPath.value = assembledFile.uri.toString();
     } catch (e) {
       debugPrint('Error assembling avatar preview: $e');
+    } finally {
+      isAssemblingPreview.value = false;
     }
   }
 
-  /// Save customized 3D avatar with its model path to local storage
+  /// Save customized 3D avatar with its model path and thumbnail to local storage
   Future<void> saveAvatar() async {
     final String? avatarName = await CustomDialogs.showSaveNameDialog();
 
@@ -343,6 +358,7 @@ class AvatarCreatorController extends GetxController {
 
       String finalGlbPath = current3dGlbPath.value;
       final avatarId = DateTime.now().millisecondsSinceEpoch.toString();
+      String thumbnailPath;
 
       if (viewMode.value == 1) {
         // In Mix & Match mode, assemble and save the permanent composite GLB
@@ -359,6 +375,17 @@ class AvatarCreatorController extends GetxController {
         );
         await assembled.copy(persistentFile.path);
         finalGlbPath = persistentFile.uri.toString();
+
+        try {
+          final headCat = activePartCategories.firstWhere((c) => c.id == 'head');
+          final headIdx = selectedParts['head'] ?? 0;
+          final headPart = headCat.parts[headIdx];
+          thumbnailPath = 'assets/thumbnails/${headPart.id}.png';
+        } catch (_) {
+          thumbnailPath = 'assets/thumbnails/default_3d.png';
+        }
+      } else {
+        thumbnailPath = 'assets/thumbnails/${selectedCharacter.id}.png';
       }
 
       final newAvatar = SavedAvatar(
@@ -366,6 +393,7 @@ class AvatarCreatorController extends GetxController {
         name: avatarName.trim(),
         svgData: actualSvgXml,
         glbPath: finalGlbPath,
+        thumbnailPath: thumbnailPath,
         createdAt: DateTime.now(),
       );
 

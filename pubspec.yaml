@@ -35,5 +35,6 @@ flutter:
     - assets/models/modular_parts/women/
     - assets/models/characters/men/
     - assets/models/characters/women/
+    - assets/thumbnails/
 
 

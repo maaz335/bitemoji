@@ -91,8 +91,29 @@ class AvatarCreatorScreen extends GetView<AvatarCreatorController> {
                                     rawPath.startsWith('file:'))
                                 ? rawPath
                                 : Uri.file(rawPath).toString();
-                            return Flutter3DViewer(
-                              src: src,
+                            return Stack(
+                              children: [
+                                Flutter3DViewer(
+                                  key: ValueKey(src),
+                                  src: src,
+                                ),
+                                if (controller.isAssemblingPreview.value)
+                                  Positioned.fill(
+                                    child: Container(
+                                      color: Colors.black.withValues(alpha: 0.35),
+                                      child: const Center(
+                                        child: SizedBox(
+                                          width: 32,
+                                          height: 32,
+                                          child: CircularProgressIndicator(
+                                            color: AppTheme.secondaryColor,
+                                            strokeWidth: 2.5,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             );
                           }),
                           // Badge
